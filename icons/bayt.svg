@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><defs>
+ <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffd3df"/><stop offset="1" stop-color="#f29bb5"/></linearGradient>
+ <radialGradient id="coin" cx=".4" cy=".35" r=".7"><stop offset="0" stop-color="#ffe17a"/><stop offset=".6" stop-color="#fbbf2c"/><stop offset="1" stop-color="#f0a015"/></radialGradient>
+ <linearGradient id="wal" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#4fcb7f"/><stop offset="1" stop-color="#2c9a59"/></linearGradient>
+ <linearGradient id="flap" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#3fb86f"/><stop offset="1" stop-color="#278c50"/></linearGradient>
+</defs><rect width="512" height="512" rx="114" fill="url(#bg)"/><g transform="translate(256 256) scale(1) translate(-256 -258)">
+ <path d="M118 113C120.7 125.3 120.7 125.3 133 128C120.7 130.7 120.7 130.7 118 143C115.3 130.7 115.3 130.7 103 128C115.3 125.3 115.3 125.3 118 113Z" fill="#fff" opacity="0.95"/><path d="M402 94C403.8 102.2 403.8 102.2 412 104C403.8 105.8 403.8 105.8 402 114C400.2 105.8 400.2 105.8 392 104C400.2 102.2 400.2 102.2 402 94Z" fill="#fff" opacity="0.9"/><path d="M430 190C431.08 194.92 431.08 194.92 436 196C431.08 197.08 431.08 197.08 430 202C428.92 197.08 428.92 197.08 424 196C428.92 194.92 428.92 194.92 430 190Z" fill="#fff" opacity="0.8"/>
+ <ellipse cx="256" cy="442" rx="150" ry="13" fill="#000" opacity=".22"/>
+ <circle cx="256" cy="178" r="94" fill="url(#coin)" stroke="#dc8b0b" stroke-width="10"/>
+ <circle cx="256" cy="178" r="70" fill="none" stroke="#f3ad22" stroke-width="5" opacity=".9"/>
+ <path d="M256 118v120M282 146c-6-11-16-16-28-16-17 0-29 9-29 22 0 30 60 17 60 49 0 14-13 24-31 24-14 0-26-6-32-18" fill="none" stroke="#c8780a" stroke-width="15" stroke-linecap="round" stroke-linejoin="round"/>
+ <rect x="80" y="214" width="352" height="214" rx="38" fill="url(#wal)"/>
+ <rect x="96" y="230" width="320" height="182" rx="26" fill="none" stroke="#b5f5cf" stroke-width="5" stroke-dasharray="13 10" stroke-linecap="round" opacity=".85"/>
+ <rect x="322" y="270" width="134" height="98" rx="34" fill="url(#flap)"/>
+ <rect x="334" y="282" width="110" height="74" rx="24" fill="none" stroke="#b5f5cf" stroke-width="4.5" stroke-dasharray="11 9" stroke-linecap="round" opacity=".85"/>
+ <circle cx="408" cy="319" r="17" fill="#d6fbe4" stroke="#2a9455" stroke-width="5"/></g></svg>

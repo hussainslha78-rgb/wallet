@@ -1,0 +1,19 @@
+{
+  "id": "./",
+  "name": "بيتنا",
+  "short_name": "بيتنا",
+  "description": "مصروف البيت",
+  "lang": "ar",
+  "dir": "rtl",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#fcf3f5",
+  "theme_color": "#fcf3f5",
+  "icons": [
+    { "src": "../icons/bayt-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "../icons/bayt-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "../icons/bayt-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}

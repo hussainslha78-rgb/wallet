@@ -1,0 +1,24 @@
+/* المحفظة — تطبيق الموبايل */
+:root{--bg:#000;--card:#16171d;--txt:#f2f3f7;--txt2:#9a9cab;--acc:#3fbf74;--acc-on:#04140a;--line:rgba(255,255,255,.08)}
+html[data-app=wife]{--bg:#fcf3f5;--card:#fff;--txt:#3b2530;--txt2:#8f6f7d;--acc:#d6336c;--acc-on:#fff;--line:rgba(59,37,48,.1)}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;height:100%;background:var(--bg);color:var(--txt);overflow:hidden;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Noto Naskh Arabic",Tahoma,sans-serif}
+#app{position:fixed;top:0;left:0;width:100%;height:calc(100% - env(safe-area-inset-bottom));border:0;background:var(--bg);display:block}
+#splash{position:fixed;inset:0;z-index:5;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;transition:opacity .35s ease,visibility .35s}
+#splash img{width:96px;height:96px;border-radius:22px;box-shadow:0 12px 40px rgba(0,0,0,.35)}
+#splash b{font-size:20px;font-weight:700;letter-spacing:.2px}
+#splash i{width:22px;height:22px;border-radius:50%;border:2.5px solid var(--line);border-top-color:var(--acc);animation:sp .8s linear infinite;font-style:normal}
+#splash.err i{width:auto;height:auto;border:0;animation:none;font-size:14px;color:var(--txt2);padding:0 28px;text-align:center;line-height:1.7}
+#splash.gone{opacity:0;visibility:hidden}
+@keyframes sp{to{transform:rotate(360deg)}}
+@media (prefers-reduced-motion:reduce){#splash i{animation-duration:2.4s}#splash{transition:none}}
+#msg{position:fixed;left:16px;right:16px;bottom:calc(96px + env(safe-area-inset-bottom));z-index:7;padding:12px 16px;border-radius:16px;background:var(--card);color:var(--txt);border:1px solid var(--line);box-shadow:0 10px 30px rgba(0,0,0,.3);font-size:13.5px;line-height:1.7;text-align:center}
+#sheet{position:fixed;inset:0;z-index:9;background:rgba(0,0,0,.45);display:flex;align-items:flex-end}
+#sheet[hidden],#msg[hidden]{display:none}
+#sheet .s{width:100%;background:var(--card);border-radius:24px 24px 0 0;padding:22px 18px calc(18px + env(safe-area-inset-bottom));box-shadow:0 -10px 40px rgba(0,0,0,.3)}
+#sheet h2{margin:0 0 6px;font-size:18px}
+#sheet p{margin:0 0 16px;color:var(--txt2);font-size:14px;line-height:1.8}
+#sheet button{display:block;width:100%;border:0;border-radius:14px;padding:14px;font:inherit;font-size:15.5px;font-weight:700;cursor:pointer}
+#shYes{background:var(--acc);color:var(--acc-on);margin-bottom:8px}
+#shNo{background:transparent;color:var(--txt2)}
+#sheet button:focus-visible{outline:2px solid var(--acc);outline-offset:2px}

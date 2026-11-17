@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="ar" dir="rtl" data-app="owner" data-name="المحفظة">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>المحفظة</title>
+<meta name="theme-color" content="#000000">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="المحفظة">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<meta name="referrer" content="no-referrer">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icons/apple-180.png">
+<link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32.png">
+<link rel="stylesheet" href="shell.css">
+</head>
+<body>
+<div id="splash" role="status" aria-live="polite"><img src="icons/icon-192.png" alt=""><b>المحفظة</b><i aria-label="جاري الفتح"></i></div>
+<iframe id="app" title="المحفظة" allow="clipboard-write"></iframe>
+<div id="msg" role="status" aria-live="polite" hidden></div>
+<div id="sheet" hidden><div class="s" role="dialog" aria-modal="true" aria-labelledby="shT"><h2 id="shT">🔔 الإشعارات</h2><p>اسمح للتطبيق يبعتلك إشعارات — الموبايل هيسألك مرة واحدة.</p><button id="shYes" type="button">اسمح بالإشعارات</button><button id="shNo" type="button">مش دلوقتي</button></div></div>
+<script src="config.js"></script>
+<script src="shell.js"></script>
+</body>
+</html>
