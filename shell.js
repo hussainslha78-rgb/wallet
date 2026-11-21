@@ -1,8 +1,9 @@
 /* المحفظة — تطبيق الموبايل (الصفحة اللي فاتحة التطبيق جوّاها)
    • بتفتح لينك /exec (من config.js) بملء الشاشة
-   • بتحفظ عندها: رمز الدخول (المحفظة) · مفتاح «بيتنا» · آخر شاشة — سفاري بيمسح تخزين اللي جوّه الـ iframe، فإحنا بنرجّعهم كل مرة
+   • بتحفظ عندها: مفتاح «بيتنا» · مفتاح ربط الموبايل (المحفظة) · آخر شاشة — سفاري بيمسح تخزين اللي جوّه الـ iframe، فإحنا بنرجّعهم كل مرة
+     (رمز الدخول مابقاش بيتحفظ هنا من v23.79 — ولو كان محفوظ من قبل كده بيتمسح)
    • الإشعارات: الإذن والاشتراك بيتعملوا هنا (الموبايل مابيسمحش بيهم من جوّه iframe) والاشتراك بيروح للتطبيق يحفظه
-   • مابنكلّمش ولا بنصدّق غير صفحات Apps Script (…-script.googleusercontent.com) */
+   • مابنكلّمش ولا بنصدّق غير صفحات Apps Script (…-script.googleusercontent.com) — واللي مفتوحة جوّه الصفحة دي بس (v23.80) */
 (function () {
   'use strict';
   var APP = document.documentElement.getAttribute('data-app') === 'wife' ? 'wife' : 'owner';
@@ -26,6 +27,7 @@
   if (km && APP === 'wife') set('k', km[1]);
   if (gm) pendingGo = gm[1];
   if (km || gm) try { history.replaceState(null, '', location.pathname + location.search); } catch (e) {}
+  if (APP === 'owner') set('pin', null);   // v23.80: رمز الدخول مابيتحفظش — امسح اللي كان محفوظ من نسخة قديمة
 
   // ── التطبيق ──
   if (!/^https:\/\/script\.google\.com\/(a\/[^/]+\/)?macros\/s\/[A-Za-z0-9_-]{20,}\/(exec|dev)$/.test(EXEC)) {
@@ -57,20 +59,38 @@
   // ── الرسايل من التطبيق ──
   window.addEventListener('message', function (e) {
     if (!GAS.test(e.origin) || !e.data || e.data.wp !== 1) return;
+    // v23.80: التطبيق اللي مفتوح جوّه الصفحة دي بس — صفحة Apps Script تانية فتحت الصفحة دي (نافذة أو iframe) مالهاش رد ولا بتاخد اللي محفوظ هنا
+    try { if (!e.source || e.source.top !== window) return; } catch (x) { return; }
     var d = e.data; appWin = e.source; appOrigin = e.origin;
     if (d.t === 'hello') {
       hello = true; $('splash').classList.add('gone');
       curSub().then(function (s) {
         var kv = {}; try { kv = JSON.parse(get('kv') || '{}') || {}; } catch (x) {}
-        toApp({ t: 'boot', app: APP, pin: APP === 'owner' ? (get('pin') || '') : '', last: get('last') || '', go: pendingGo, perm: perm(), ep: s ? s.endpoint : '', ios: IOS, standalone: standalone(), kv: kv });
+        toApp({ t: 'boot', app: APP, pin: '', last: get('last') || '', go: pendingGo, perm: perm(), ep: s ? s.endpoint : '', ios: IOS, standalone: standalone(), kv: kv });
         pendingGo = '';
       });
     }
-    else if (d.t === 'pin' && APP === 'owner') set('pin', d.pin ? String(d.pin).slice(0, 40) : null);
+    else if (d.t === 'pin' && APP === 'owner') set('pin', null);   // نسخ التطبيق القديمة كانت بتبعت الرمز يتحفظ — مابقاش بيتحفظ
     else if (d.t === 'screen') set('last', String(d.s || '').slice(0, 10));
     else if (d.t === 'kv' && /^[a-zA-Z]{1,20}$/.test(String(d.k || ''))) { var kv = {}; try { kv = JSON.parse(get('kv') || '{}') || {}; } catch (x) {} kv[d.k] = d.v; set('kv', JSON.stringify(kv)); }
     else if (d.t === 'push') askPush(String(d.vapid || ''));
     else if (d.t === 'pushOff') pushOff();
+    else if (d.t === 'depth') bkDepth(d.n);
+  });
+
+  // ── زرار الرجوع (أندرويد): طول ما فيه حاجة مفتوحة في التطبيق (نافذة · صفحة غير الرئيسية) بنحط خطوة في التاريخ —
+  //    الرجوع بيستهلكها ويقول للتطبيق يقفل اللي فوق بدل ما التطبيق كله يتقفل · مفيش حاجة مفتوحة = الرجوع بيقفل التطبيق عادي ──
+  var BK = { n: 0, trap: false, wait: false, t: 0 };
+  function bkSync() {
+    clearTimeout(BK.t); if (BK.wait) return;
+    if (BK.n > 0 && !BK.trap) { try { history.pushState({ wpBack: 1 }, ''); BK.trap = true; } catch (e) {} }
+    else if (BK.n === 0 && BK.trap) BK.t = setTimeout(function () { if (BK.n === 0 && BK.trap && !BK.wait) { BK.wait = true; try { history.back(); } catch (e) { BK.wait = false; } } }, 400);   // اتقفل من جوّه (×) — نشيل الخطوة
+  }
+  function bkDepth(n) { BK.n = Math.max(0, Math.min(9, Number(n) || 0)); bkSync(); }
+  window.addEventListener('popstate', function () {
+    if (BK.wait) { BK.wait = false; BK.trap = false; bkSync(); return; }   // ده إحنا اللي شلناها
+    if (!BK.trap) return;
+    BK.trap = false; toApp({ t: 'back' });                                    // المستخدم رجع: التطبيق يقفل اللي فوق ويبعت الحالة الجديدة
   });
 
   // ── الإشعارات ──
