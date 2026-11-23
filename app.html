@@ -1103,7 +1103,7 @@ function askConfirm(msg,onYes){
   document.getElementById('acYes').onclick=function(){back();onYes();};
 }
 function refresh(spin){if(spin){var i=document.getElementById('hdIc');i.style.display='inline-block';i.style.animation='sp .8s linear infinite';}call(spin?'forceRefresh':'getState',[],function(r){document.getElementById('hdIc').style.animation='';if(r&&r.ok!==false){S=r;renderAll();}},{keep:1});}
-var UI_VER='v23.81';   /* ✔ لازم تبقى زي ENGINE_VER في Engine.gs */
+var UI_VER='v23.82';   /* ✔ لازم تبقى زي ENGINE_VER في Engine.gs */
 /* ✔ v23.55: نقط الإضافات — كل جزء جديد بيسجّل نفسه في مكانه من غير ما يلمس الدوال الكبيرة:
    hxReg('home.top',fn) + HX('home.top',d) = HTML · tiReg(fn(d,it)) = بنود «محتاج منك النهاردة» · onRender(fn) = بعد كل رسم للصفحة */
 var HXR={},TIX=[],ONR=[];function hxReg(slot,fn){(HXR[slot]=HXR[slot]||[]).push(fn);}function tiReg(fn){TIX.push(fn);}function onRender(fn){ONR.push(fn);}
@@ -3320,7 +3320,7 @@ function rSet(){if(SET_T!=='wife')WC=null;var st=S.settings||{},h='<div class="t
     h+='<div class="card" style="cursor:pointer" onclick="openImportFixes()"><div class="ct">🔗 ربط تحويلات ثاندر بالبنوك</div><div class="mini">بعد استيراد Wallet: بيلاقي نفس التحويل متسجل مرتين (من ناحية البنك ومن ناحية ثاندر) ويخليه تحويل واحد — والدخل المكرر يتشال. الأرصدة مش بتتغير.</div></div>'+
     '<div class="card"><div class="ct">📥 استيراد من تطبيق Wallet</div><div class="mini" style="margin-bottom:8px">اختار ملف التصدير (wallet_records.csv). هتشوف كل حاجة الأول — الربط والمكرر والأرصدة — وبعدين تأكد.</div><input type="file" id="wFile" accept=".csv,text/csv" onchange="walletPick(this)">'+((S.settings||{})['استيراد Wallet']?'<button class="btn gh sm" style="margin-top:8px;color:var(--red)" onclick="confirmDo(\'هيتمسح كل اللي اتستورد من Wallet والأرصدة الافتتاحية هترجع زي ما كانت. متأكد؟\',\'undoWalletImport\',[])">↩️ تراجع عن آخر استيراد</button>':'')+'</div>';
     h+='<details class="card more"><summary>📥 استيراد CSV عام (متقدم)</summary><textarea id="csvIn" rows="4" placeholder="date,account,type,amount,category,note" style="margin-top:8px"></textarea><button class="btn gh" onclick="guard(this,\'importCSV\',[v(\'csvIn\')])">استيراد</button></details>';}
-  h+='<div class="mini" style="text-align:center;margin:18px 0 8px;opacity:.7">📦 نسخة الشاشة '+UI_VER+' · نسخة الكود '+esc(S.engineVer||'؟')+'</div>';   /* ✔ v23.29: تعرف تتأكد إن التحديث اتنشر */
+  h+='<div class="mini" style="text-align:center;margin:18px 0 8px;opacity:.7">📦 نسخة الشاشة '+UI_VER+' · نسخة الكود '+esc(S.engineVer||'؟')+' · '+(window.MOBX?'⚡ فتح سريع':'طريقة عادية')+'</div>';   /* ✔ v23.29: تعرف تتأكد إن التحديث اتنشر */
   document.getElementById('p-set').innerHTML=h;}
 /* ✔ v23.8: مراجعة ما بعد الاستيراد */
 function openImportFixes(){openM('<div class="loader"><div class="spin"></div></div>');call('previewImportFixes',[],function(r){if(!r||r.ok===false){closeM();toast(r&&r.msg||'خطأ',1);return;}
