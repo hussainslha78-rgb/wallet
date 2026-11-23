@@ -1,5 +1,7 @@
 /* المحفظة — تطبيق الموبايل (الصفحة اللي فاتحة التطبيق جوّاها)
    • بتفتح لينك /exec (من config.js) بملء الشاشة
+   • v23.81 الفتح السريع («المحفظة» · الموبايل مربوط): بتفتح app.html (من هنا · متخزن على الموبايل) بدل صفحة جوجل — وهو بيكلّم /exec بمفتاح الجهاز + الرمز
+     app.html مش موجود → الطريقة العادية لوحدها · الربط اتلغى/الجهاز اتقفل → الطريقة العادية (ومنها تربط تاني)
    • بتحفظ عندها: مفتاح «بيتنا» · مفتاح ربط الموبايل (المحفظة) · آخر شاشة — سفاري بيمسح تخزين اللي جوّه الـ iframe، فإحنا بنرجّعهم كل مرة
      (رمز الدخول مابقاش بيتحفظ هنا من v23.79 — ولو كان محفوظ من قبل كده بيتمسح)
    • الإشعارات: الإذن والاشتراك بيتعملوا هنا (الموبايل مابيسمحش بيهم من جوّه iframe) والاشتراك بيروح للتطبيق يحفظه
@@ -34,13 +36,24 @@
     $('splash').classList.add('err'); $('splash').querySelector('i').textContent = 'افتح config.js وحط لينك /exec بتاع التطبيق';
     return;
   }
-  var src = EXEC + (APP === 'wife' ? '?page=family' + (get('k') ? '&k=' + encodeURIComponent(get('k')) : '') : '');
+  var srcOld = EXEC + (APP === 'wife' ? '?page=family' + (get('k') ? '&k=' + encodeURIComponent(get('k')) : '') : '');
+  // الفتح السريع: موبايل مربوط (مفتاح محفوظ) · مش مقفول من الإعدادات (fast=0) · والجلسة دي مش راجعة للطريقة العادية
+  var KV0 = {}; try { KV0 = JSON.parse(get('kv') || '{}') || {}; } catch (x) {}
+  function ss(k, v) { try { if (v === undefined) return sessionStorage.getItem(P + k); if (v === null) sessionStorage.removeItem(P + k); else sessionStorage.setItem(P + k, String(v)); } catch (e) {} return null; }
+  var OLD = ss('old') === '1', fellBack = false;
+  var FAST = APP === 'owner' && window.top === window && !OLD && KV0.fast !== 0 && /^[0-9a-f]{6,16}\.[A-Za-z0-9_-]{40,50}$/.test(String(KV0.dev || ''));
+  var src = FAST ? 'app.html' : srcOld;
+  var n0 = ss('note'); if (n0) { ss('note', null); setTimeout(function () { note(n0, 9000); }, 600); }
   function load() { $('app').src = src; }
-  if (navigator.onLine === false) { note('مفيش نت — هيفتح أول ما النت يرجع'); window.addEventListener('online', function on() { window.removeEventListener('online', on); $('msg').hidden = true; load(); }); }
+  if (navigator.onLine === false && !FAST) { note('مفيش نت — هيفتح أول ما النت يرجع'); window.addEventListener('online', function on() { window.removeEventListener('online', on); $('msg').hidden = true; load(); }); }
   else load();
   $('app').addEventListener('load', function () {
+    if (FAST) {   // app.html مش مرفوع (أو صفحة غلط) → الطريقة العادية
+      var okApp = false; try { okApp = !!$('app').contentWindow.MOBX; } catch (x) {}
+      if (!okApp) { FAST = false; fellBack = true; if (navigator.onLine === false) { note('مفيش نت — افتح التطبيق مرة والنت شغال'); $('splash').classList.add('gone'); return; } $('app').src = srcOld; return; }
+    }
     setTimeout(function () { if (!hello) { $('splash').classList.add('gone'); } }, 9000);
-    setTimeout(function () { if (!hello) note('لو التطبيق مش بيكمّل: من الإعدادات ← 🔔 الإشعارات، حط «رابط تطبيق الموبايل» = ' + location.origin + location.pathname.replace(/bayt\/?(index\.html)?$/, '').replace(/index\.html$/, ''), 12000); }, 15000);
+    setTimeout(function () { if (!hello && !FAST) note('لو التطبيق مش بيكمّل: من الإعدادات ← 🔔 الإشعارات، حط «رابط تطبيق الموبايل» = ' + location.origin + location.pathname.replace(/bayt\/?(index\.html)?$/, '').replace(/index\.html$/, ''), 12000); }, 15000);
   });
 
   // ── service worker (التثبيت + الإشعارات + الصفحة من غير نت) ──
@@ -58,7 +71,7 @@
 
   // ── الرسايل من التطبيق ──
   window.addEventListener('message', function (e) {
-    if (!GAS.test(e.origin) || !e.data || e.data.wp !== 1) return;
+    if (!(GAS.test(e.origin) || (FAST && e.origin === location.origin)) || !e.data || e.data.wp !== 1) return;
     // v23.80: التطبيق اللي مفتوح جوّه الصفحة دي بس — صفحة Apps Script تانية فتحت الصفحة دي (نافذة أو iframe) مالهاش رد ولا بتاخد اللي محفوظ هنا
     try { if (!e.source || e.source.top !== window) return; } catch (x) { return; }
     var d = e.data; appWin = e.source; appOrigin = e.origin;
@@ -66,7 +79,7 @@
       hello = true; $('splash').classList.add('gone');
       curSub().then(function (s) {
         var kv = {}; try { kv = JSON.parse(get('kv') || '{}') || {}; } catch (x) {}
-        toApp({ t: 'boot', app: APP, pin: '', last: get('last') || '', go: pendingGo, perm: perm(), ep: s ? s.endpoint : '', ios: IOS, standalone: standalone(), kv: kv });
+        toApp({ t: 'boot', app: APP, pin: '', last: get('last') || '', go: pendingGo, sh: 2, fast: FAST ? 1 : 0, fb: fellBack ? 1 : 0, perm: perm(), ep: s ? s.endpoint : '', ios: IOS, standalone: standalone(), kv: kv });
         pendingGo = '';
       });
     }
@@ -76,6 +89,11 @@
     else if (d.t === 'push') askPush(String(d.vapid || ''));
     else if (d.t === 'pushOff') pushOff();
     else if (d.t === 'depth') bkDepth(d.n);
+    else if (APP === 'owner' && d.t === 'old') {   // من الإعدادات (keep = لحد ما ترجّعها) · أو الربط اتلغى/الجهاز اتقفل (الجلسة دي بس)
+      if (d.keep) { var k0 = {}; try { k0 = JSON.parse(get('kv') || '{}') || {}; } catch (x) {} k0.fast = 0; set('kv', JSON.stringify(k0)); }
+      ss('old', '1'); if (d.msg) ss('note', String(d.msg).slice(0, 200)); location.reload();
+    }
+    else if (APP === 'owner' && d.t === 'fast') { var k1 = {}; try { k1 = JSON.parse(get('kv') || '{}') || {}; } catch (x) {} delete k1.fast; set('kv', JSON.stringify(k1)); ss('old', null); location.reload(); }
   });
 
   // ── زرار الرجوع (أندرويد): طول ما فيه حاجة مفتوحة في التطبيق (نافذة · صفحة غير الرئيسية) بنحط خطوة في التاريخ —
