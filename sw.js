@@ -3,7 +3,7 @@
 var SCOPE = self.registration.scope, WIFE = /\/bayt\/$/.test(SCOPE), ROOT = WIFE ? SCOPE.replace(/bayt\/$/, '') : SCOPE;
 var NAME = WIFE ? 'بيتنا' : 'المحفظة', ICON = ROOT + 'icons/' + (WIFE ? 'bayt-192.png' : 'icon-192.png');
 var CACHE = 'wallet-shell-' + (WIFE ? 'bayt-' : '') + 'v2';
-var FILES = [SCOPE, SCOPE + 'index.html', SCOPE + 'manifest.webmanifest', ROOT + 'shell.js', ROOT + 'shell.css', ROOT + 'config.js', ICON, ROOT + 'icons/badge-96.png'].concat(WIFE ? [] : [ROOT + 'app.html']);   // v23.81: app.html = التطبيق نفسه (الفتح السريع)
+var FILES = [SCOPE, SCOPE + 'index.html', SCOPE + 'manifest.webmanifest', ROOT + 'shell.js', ROOT + 'shell.css', ROOT + 'config.js', ICON, ROOT + 'icons/badge-96.png'].concat([SCOPE + 'app.html']);   // v23.81/83: app.html = التطبيق نفسه (الفتح السريع) — في كل تطبيق جنب صفحته
 self.addEventListener('install', function (e) { e.waitUntil(caches.open(CACHE).then(function (c) { return Promise.all(FILES.map(function (u) { return c.add(u).catch(function () {}); })); }).catch(function () {}).then(function () { return self.skipWaiting(); })); });
 self.addEventListener('activate', function (e) {
   e.waitUntil(caches.keys().then(function (K) { return Promise.all(K.filter(function (k) { return k.indexOf('wallet-shell-' + (WIFE ? 'bayt-' : '')) === 0 && k !== CACHE && (WIFE || k.indexOf('wallet-shell-bayt-') !== 0); }).map(function (k) { return caches.delete(k); })); }).then(function () { return self.clients.claim(); }));
