@@ -9,10 +9,10 @@ self.addEventListener('activate', function (e) {
   e.waitUntil(caches.keys().then(function (K) { return Promise.all(K.filter(function (k) { return k.indexOf('wallet-shell-' + (WIFE ? 'bayt-' : '')) === 0 && k !== CACHE && (WIFE || k.indexOf('wallet-shell-bayt-') !== 0); }).map(function (k) { return caches.delete(k); })); }).then(function () { return self.clients.claim(); }));
 });
 // ملفات الصفحة: من النت الأول (عشان الملف الجديد يشتغل على طول) · النت اتأخر عن ثانية ونص أو مفيش نت: النسخة المحفوظة (والجديد بيتحفظ للمرة الجاية)
-// الخط (Google Fonts): المحفوظ الأول ويتحدّث في الخلفية
+// الخط (Google Fonts) ومكتبة الرسومات (cdnjs): المحفوظ الأول ويتحدّث في الخلفية
 self.addEventListener('fetch', function (e) {
   var r = e.request; if (r.method !== 'GET') return;
-  if (/^https:\/\/fonts\.(googleapis|gstatic)\.com\//.test(r.url)) {
+  if (/^https:\/\/(fonts\.(googleapis|gstatic)\.com|cdnjs\.cloudflare\.com\/ajax\/libs)\//.test(r.url)) {   // v23.91: مكتبة الرسومات كمان — عشان تشتغل من غير نت
     e.respondWith(caches.open(CACHE).then(function (c) { return c.match(r).then(function (m) {
       var net = fetch(r).then(function (res) { if (res && (res.ok || res.type === 'opaque')) c.put(r, res.clone()); return res; });
       if (m) { net.catch(function () {}); return m; } return net; }); }));
